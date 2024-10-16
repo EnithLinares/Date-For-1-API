@@ -1,6 +1,6 @@
 # Date for 1 - Server Repo
 
-For the client repo please visit this repo
+For the client repo please visit [this repo](https://github.com/EnithLinares/Date-For-1/blob/main/README.md)
 
 ## Overview
 
