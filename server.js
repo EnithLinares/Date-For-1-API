@@ -10,6 +10,12 @@ const db = knex(knexConfig.development);
 
 const port = process.env.PORT || 8080;
 
+app.use(express.static("public"));
+
+app.get("/", (req, res) => {
+    res.send("Hello, world!");
+});
+
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
