@@ -1,13 +1,37 @@
-/**
- * @param { import("knex").Knex } knex
- * @returns { Promise<void> } 
- */
-exports.seed = async function(knex) {
-  // Deletes ALL existing entries
-  await knex('table_name').del()
-  await knex('table_name').insert([
-    {id: 1, colName: 'rowValue1'},
-    {id: 2, colName: 'rowValue2'},
-    {id: 3, colName: 'rowValue3'}
-  ]);
-};
+export async function seed(knex) {
+    await knex("activity_moods").del();
+    await knex("activity_moods").insert([
+        { activity_id: 1, mood_id: 2 },
+        { activity_id: 1, mood_id: 7 },
+        { activity_id: 1, mood_id: 3 },
+        { activity_id: 2, mood_id: 1 },
+        { activity_id: 2, mood_id: 4 },
+        { activity_id: 2, mood_id: 5 },
+        { activity_id: 3, mood_id: 1 },
+        { activity_id: 3, mood_id: 4 },
+        { activity_id: 3, mood_id: 5 },
+        { activity_id: 4, mood_id: 2 },
+        { activity_id: 4, mood_id: 7 },
+        { activity_id: 5, mood_id: 1 },
+        { activity_id: 5, mood_id: 4 },
+        { activity_id: 5, mood_id: 5 },
+        { activity_id: 6, mood_id: 6 },
+        { activity_id: 6, mood_id: 1 },
+        { activity_id: 7, mood_id: 3 },
+        { activity_id: 7, mood_id: 4 },
+        { activity_id: 7, mood_id: 6 },
+        { activity_id: 8, mood_id: 1 },
+        { activity_id: 8, mood_id: 2 },
+        { activity_id: 8, mood_id: 6 },
+        { activity_id: 9, mood_id: 3 },
+        { activity_id: 9, mood_id: 7 },
+        { activity_id: 10, mood_id: 8 },
+        { activity_id: 10, mood_id: 9 },
+        { activity_id: 10, mood_id: 10 },
+        { activity_id: 11, mood_id: 8 },
+        { activity_id: 11, mood_id: 9 },
+        { activity_id: 12, mood_id: 3 },
+        { activity_id: 12, mood_id: 4 },
+        { activity_id: 12, mood_id: 6 },
+    ]);
+}
