@@ -1,4 +1,9 @@
 export async function seed(knex) {
+    await knex("activity_price_ranges").del();
+    await knex("activity_moods").del();
+    await knex("activity_times").del();
+    await knex("activities").del();
+
     await knex("venues").del();
 
     await knex("venues").insert([
