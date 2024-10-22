@@ -1,4 +1,5 @@
-import db from "../db/knexConfig.js";
+import db from "../db.js";
+import { validationResult } from "express-validator";
 
 // Get all venues
 export const getAllVenues = async (req, res) => {
@@ -10,22 +11,12 @@ export const getAllVenues = async (req, res) => {
     }
 };
 
-// Create a new venue
-export const createVenue = async (req, res) => {
-    try {
-        const newVenue = req.body;
-        const [id] = await db("venues").insert(newVenue);
-        res.status(201).json({ id });
-    } catch (error) {
-        res.status(500).json({ error: "Failed to create venue" });
-    }
-};
-
 // Get a specific venue by ID
 export const getVenueById = async (req, res) => {
     try {
         const { id } = req.params;
         const venue = await db("venues").where({ id }).first();
+
         if (venue) {
             res.json(venue);
         } else {
@@ -38,10 +29,16 @@ export const getVenueById = async (req, res) => {
 
 // Update a venue by ID
 export const updateVenue = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
     try {
         const { id } = req.params;
         const changes = req.body;
         const count = await db("venues").where({ id }).update(changes);
+
         if (count) {
             res.json({ message: "Venue updated" });
         } else {
@@ -57,6 +54,7 @@ export const deleteVenue = async (req, res) => {
     try {
         const { id } = req.params;
         const count = await db("venues").where({ id }).del();
+
         if (count) {
             res.json({ message: "Venue deleted" });
         } else {

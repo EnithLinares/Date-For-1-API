@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-export default {
+const knexConfig = {
     development: {
         client: "mysql2",
         connection: {
@@ -19,3 +19,5 @@ export default {
         },
     },
 };
+
+export default knexConfig;
