@@ -5,6 +5,7 @@ import {
     getActivityById,
     updateActivity,
     deleteActivity,
+    searchActivities,
 } from "../controllers/activitiesController.js";
 import { validateActivity } from "../validation/activityValidation.js";
 import { validationResult } from "express-validator";
@@ -12,7 +13,7 @@ import { validationResult } from "express-validator";
 const router = express.Router();
 
 router.get("/", getAllActivities);
-
+router.get("/search", searchActivities);
 router.post(
     "/",
     validateActivity,
@@ -27,7 +28,6 @@ router.post(
 );
 
 router.get("/:id", getActivityById);
-
 router.put(
     "/:id",
     validateActivity,

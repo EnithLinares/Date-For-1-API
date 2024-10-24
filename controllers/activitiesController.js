@@ -12,6 +12,50 @@ export const getAllActivities = async (req, res) => {
     }
 };
 
+//Search activities query endpoint
+export const searchActivities = async (req, res) => {
+    try {
+        const { query } = req.query;
+
+        const results = await db("activities")
+            .distinct(
+                "activities.id",
+                "activities.name",
+                "activities.description"
+            )
+            .join("venues", "activities.venue_id", "venues.id")
+            .join(
+                "activity_moods",
+                "activities.id",
+                "activity_moods.activity_id"
+            )
+            .join("moods", "activity_moods.mood_id", "moods.id")
+            .join(
+                "activity_price_ranges",
+                "activities.id",
+                "activity_price_ranges.activity_id"
+            )
+            .join(
+                "price_ranges",
+                "activity_price_ranges.price_range_id",
+                "price_ranges.id"
+            )
+            .where(function () {
+                this.where("activities.name", "like", `%${query}%`)
+                    .orWhere("activities.description", "like", `%${query}%`)
+                    .orWhere("moods.name", "like", `%${query}%`)
+                    .orWhere("price_ranges.range", "like", `%${query}%`)
+                    .orWhere("venues.name", "like", `%${query}%`);
+            });
+
+        res.setHeader("Content-Type", "application/json");
+        res.json(results);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Failed to perform search" });
+    }
+};
+
 // Create a new activity with validation
 export const createActivity = async (req, res) => {
     const errors = validationResult(req);
