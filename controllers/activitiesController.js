@@ -106,36 +106,27 @@ export const getFilteredActivities = async (req, res) => {
     }
 };
 
-// Create a new activity with validation
 export const createActivity = async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
-
     try {
         const {
             name,
             description,
             venue_name,
-            postal_code,
             time_of_day_id,
             mood_id,
             price_range_id,
-            image_url,
         } = req.body;
 
-        // Insert or find venue
-        let venue = await db("venues")
-            .where({ name: venue_name, postal_code })
-            .first();
+        const image_url = req.file ? `/uploads/${req.file.filename}` : null;
+
+        let venue = await db("venues").where({ name: venue_name }).first();
+
         if (!venue) {
             [venue] = await db("venues")
-                .insert({ name: venue_name, postal_code })
+                .insert({ name: venue_name })
                 .returning("*");
         }
 
-        // Insert new activity
         const [id] = await db("activities").insert({
             name,
             description,
@@ -143,7 +134,6 @@ export const createActivity = async (req, res) => {
             image_url,
         });
 
-        // Insert related data into junction tables
         await db("activity_times").insert({ activity_id: id, time_of_day_id });
         await db("activity_moods").insert({ activity_id: id, mood_id });
         await db("activity_price_ranges").insert({
@@ -153,6 +143,7 @@ export const createActivity = async (req, res) => {
 
         res.status(201).json({ id });
     } catch (error) {
+        console.error("Error creating activity:", error);
         res.status(500).json({ error: "Failed to create activity" });
     }
 };

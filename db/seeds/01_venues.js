@@ -17,7 +17,7 @@ export async function seed(knex) {
         {
             id: 2,
             name: "Hyland Cinema",
-            address: "421 Ridout Street North,London, ON N6A 5H4",
+            address: "240 Wharncliffe Rd S, ßLondon, Ontario N6J 2L4",
             website_url: "https://www.hylandcinema.com/",
         },
         {
