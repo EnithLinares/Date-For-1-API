@@ -31,7 +31,7 @@ export const searchActivities = async (req, res) => {
             )
             .join("moods", "activity_moods.mood_id", "moods.id")
             .join(
-                "activity_price_rangess",
+                "activity_price_ranges",
                 "activities.id",
                 "activity_price_ranges.activity_id"
             )
@@ -51,7 +51,7 @@ export const searchActivities = async (req, res) => {
         res.setHeader("Content-Type", "application/json");
         res.json(results);
     } catch (error) {
-        console.error(error);
+        console.error("Error performing search:", error);
         res.status(500).json({ error: "Failed to perform search" });
     }
 };
