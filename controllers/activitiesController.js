@@ -31,7 +31,7 @@ export const searchActivities = async (req, res) => {
             )
             .join("moods", "activity_moods.mood_id", "moods.id")
             .join(
-                "activity_price_ranges",
+                "activity_price_rangess",
                 "activities.id",
                 "activity_price_ranges.activity_id"
             )
@@ -53,6 +53,56 @@ export const searchActivities = async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Failed to perform search" });
+    }
+};
+
+export const getFilteredActivities = async (req, res) => {
+    try {
+        const { venue, mood, priceRange, timeOfDay } = req.query;
+
+        const query = db("activities")
+            .distinct(
+                "activities.id",
+                "activities.name",
+                "activities.description"
+            )
+            .join("venues", "activities.venue_id", "venues.id")
+            .join(
+                "activity_moods",
+                "activities.id",
+                "activity_moods.activity_id"
+            )
+            .join("moods", "activity_moods.mood_id", "moods.id")
+            .join(
+                "activity_price_ranges",
+                "activities.id",
+                "activity_price_ranges.activity_id"
+            )
+            .join(
+                "price_ranges",
+                "activity_price_ranges.price_range_id",
+                "price_ranges.id"
+            )
+            .join(
+                "activity_times",
+                "activities.id",
+                "activity_times.activity_id"
+            )
+            .join(
+                "times_of_day",
+                "activity_times.time_of_day_id",
+                "times_of_day.id"
+            );
+
+        if (venue) query.where("venues.id", venue);
+        if (mood) query.where("moods.id", mood);
+        if (priceRange) query.where("price_ranges.id", priceRange);
+        if (timeOfDay) query.where("times_of_day.id", timeOfDay);
+
+        const results = await query.select("activities.*");
+        res.json(results);
+    } catch (error) {
+        res.status(500).json({ error: "Failed to fetch activities" });
     }
 };
 
