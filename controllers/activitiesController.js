@@ -58,7 +58,7 @@ export const searchActivities = async (req, res) => {
 
 export const getFilteredActivities = async (req, res) => {
     try {
-        const { venue, mood, priceRange, timeOfDay } = req.query;
+        const { mood, timeOfDay, priceRange } = req.query;
 
         const query = db("activities")
             .distinct(
@@ -94,10 +94,9 @@ export const getFilteredActivities = async (req, res) => {
                 "times_of_day.id"
             );
 
-        if (venue) query.where("venues.id", venue);
-        if (mood) query.where("moods.id", mood);
-        if (priceRange) query.where("price_ranges.id", priceRange);
-        if (timeOfDay) query.where("times_of_day.id", timeOfDay);
+        if (mood) query.where("moods.name", mood);
+        if (timeOfDay) query.where("times_of_day.name", timeOfDay);
+        if (priceRange) query.where("price_ranges.range", priceRange);
 
         const results = await query.select("activities.*");
         res.json(results);
