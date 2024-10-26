@@ -66,7 +66,6 @@ export const getFilteredActivities = async (req, res) => {
                 "activities.name",
                 "activities.description"
             )
-            .join("venues", "activities.venue_id", "venues.id")
             .join(
                 "activity_moods",
                 "activities.id",
@@ -99,6 +98,11 @@ export const getFilteredActivities = async (req, res) => {
         if (priceRange) query.where("price_ranges.range", priceRange);
 
         const results = await query.select("activities.*");
+
+        if (results.length === 0) {
+            return res.json({ message: "No matching activities found." });
+        }
+
         res.json(results);
     } catch (error) {
         res.status(500).json({ error: "Failed to fetch activities" });
