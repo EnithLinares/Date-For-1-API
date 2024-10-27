@@ -58,13 +58,21 @@ export const searchActivities = async (req, res) => {
 
 export const getFilteredActivities = async (req, res) => {
     try {
-        const { mood, timeOfDay, priceRange } = req.query;
+        const { mood, timeOfDay, priceRange, venue } = req.query;
 
         const query = db("activities")
-            .distinct(
+            .select(
                 "activities.id",
                 "activities.name",
-                "activities.description"
+                "activities.description",
+                "activities.image_url",
+                "venues.name as venue_name",
+                db.raw(
+                    "GROUP_CONCAT(DISTINCT times_of_day.name) as times_of_day"
+                ),
+                db.raw(
+                    "GROUP_CONCAT(DISTINCT price_ranges.range) as price_ranges"
+                )
             )
             .join(
                 "activity_moods",
@@ -91,20 +99,20 @@ export const getFilteredActivities = async (req, res) => {
                 "times_of_day",
                 "activity_times.time_of_day_id",
                 "times_of_day.id"
-            );
+            )
+            .join("venues", "activities.venue_id", "venues.id")
+            .groupBy("activities.id", "venues.name");
 
         if (mood) query.where("moods.name", mood);
         if (timeOfDay) query.where("times_of_day.name", timeOfDay);
         if (priceRange) query.where("price_ranges.range", priceRange);
+        if (venue) query.where("venues.id", venue);
 
-        const results = await query.select("activities.*");
-
-        if (results.length === 0) {
-            return res.json({ message: "No matching activities found." });
-        }
+        const results = await query;
 
         res.json(results);
     } catch (error) {
+        console.error("Error fetching activities:", error);
         res.status(500).json({ error: "Failed to fetch activities" });
     }
 };
