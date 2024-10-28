@@ -163,13 +163,66 @@ export const createActivity = async (req, res) => {
 export const getActivityById = async (req, res) => {
     try {
         const { id } = req.params;
-        const activity = await db("activities").where({ id }).first();
+        const activity = await db("activities")
+            .select(
+                "activities.id",
+                "activities.name",
+                "activities.description",
+                "activities.image_url",
+                "venues.name as venue_name",
+                "venues.address as venue_address",
+                "venues.website_url as venue_website", // Correct column name
+                db.raw(
+                    "GROUP_CONCAT(DISTINCT times_of_day.name) as times_of_day"
+                ),
+                db.raw(
+                    "GROUP_CONCAT(DISTINCT price_ranges.range) as price_ranges"
+                ),
+                db.raw("GROUP_CONCAT(DISTINCT moods.name) as moods")
+            )
+            .leftJoin(
+                "activity_moods",
+                "activities.id",
+                "activity_moods.activity_id"
+            )
+            .leftJoin("moods", "activity_moods.mood_id", "moods.id")
+            .leftJoin(
+                "activity_price_ranges",
+                "activities.id",
+                "activity_price_ranges.activity_id"
+            )
+            .leftJoin(
+                "price_ranges",
+                "activity_price_ranges.price_range_id",
+                "price_ranges.id"
+            )
+            .leftJoin(
+                "activity_times",
+                "activities.id",
+                "activity_times.activity_id"
+            )
+            .leftJoin(
+                "times_of_day",
+                "activity_times.time_of_day_id",
+                "times_of_day.id"
+            )
+            .leftJoin("venues", "activities.venue_id", "venues.id")
+            .where("activities.id", id)
+            .groupBy(
+                "activities.id",
+                "venues.name",
+                "venues.address",
+                "venues.website_url"
+            )
+            .first();
+
         if (activity) {
             res.json(activity);
         } else {
             res.status(404).json({ error: "Activity not found" });
         }
     } catch (error) {
+        console.error("Error fetching activity:", error);
         res.status(500).json({ error: "Failed to fetch activity" });
     }
 };
