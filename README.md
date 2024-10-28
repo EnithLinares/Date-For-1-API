@@ -2,6 +2,20 @@
 
 For the client repo please visit [this repo](https://github.com/EnithLinares/Date-For-1/blob/main/README.md)
 
+## Installation
+
+Please have the following modules installed prior to starting your server
+cors
+dotenv
+express
+express-validator
+knex
+multer
+mysql2
+
+Once installed, you will need to run the migrations and seed the database in order to create your database.
+Use the command knex migrate:latest --knexfile knexfile.mjs
+
 ## Overview
 
 "Date for 1" is an app designed to help people explore their cities and plan solo dates. The app suggests activities based on the time of day, the user's desired experience, and their current mood.
