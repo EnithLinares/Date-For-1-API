@@ -6,6 +6,8 @@
     "main": "server.js",
     "scripts": {
         "type": "module",
+        "build": "vite build",
+        "start":"npm start",
         "test": "echo \"Error: no test specified\" && exit 1",
         "dev": "node --watch server.js",
         "migrate": "knex migrate:latest --knexfile knexfile.mjs"
